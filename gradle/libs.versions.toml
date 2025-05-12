@@ -1,0 +1,96 @@
+[versions]
+# Android
+agp = "8.9.2"
+coreKtx = "1.16.0"
+lifecycleRuntimeKtx = "2.9.0"
+activityCompose = "1.10.1"
+composeBom = "2025.05.00"
+
+# Kotlin
+kotlin = "2.1.0"
+coroutines = "1.10.1"
+kotlinxSerialization = "1.8.0"
+
+# Testing
+mockk = "1.13.12"
+turbine = "1.2.0"
+uiTestJunit4 = "1.8.1"
+
+# Detekt
+detekt = "1.23.1"
+
+# Koin
+koin = "4.0.0"
+koinAnnotations = "2.0.0-Beta2"
+
+# Ktor
+ktor = "3.0.1"
+ktorClientMock = "3.0.1"
+ktorClientLogging = "3.0.1"
+
+# KSP
+ksp = "2.1.0-1.0.29"
+
+[libraries]
+# AndroidX
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+# Kotlin
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+# Detekt
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+
+# Koin
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koinAnnotations" }
+
+# Ktor
+ktor-client-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktorClientLogging" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# Testing
+testing-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+testing-ktor = { module = "io.ktor:ktor-client-mock", version.ref = "ktorClientMock" }
+testing-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+testing-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+testing-koin = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
+
+[bundles]
+compose-debug = ["androidx-ui-tooling", "androidx-ui-test-manifest"]
+compose = [
+    "androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview", "androidx-material3",
+    "androidx-activity-compose"
+]
+
+ktor = [
+    "ktor-client-auth", "ktor-client-cio", "ktor-client-content-negotiation",
+    "ktor-client-core", "ktor-client-logging", "ktor-serialization-kotlinx-json"
+]
+
+testing = [
+    "testing-mockk", "testing-ktor", "testing-coroutines", "testing-koin", "testing-turbine"
+]
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
