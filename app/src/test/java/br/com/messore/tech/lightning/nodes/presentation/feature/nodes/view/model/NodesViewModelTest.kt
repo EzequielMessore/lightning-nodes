@@ -88,7 +88,7 @@ class NodesViewModelTest {
         viewModel.onIntent(NodesViewIntent.OrderChange(NodesViewIntent.OrderChange.Order.CHANNELS))
         viewModel.viewState.test {
             val sortedNodes = nodes.sortedBy { it.channels }
-            assertEquals(initialState.success(sortedNodes), awaitItem())
+            assertEquals(initialState.copy(order = NodesViewIntent.OrderChange.Order.CHANNELS).success(sortedNodes), awaitItem())
         }
     }
 
@@ -105,7 +105,7 @@ class NodesViewModelTest {
         viewModel.onIntent(NodesViewIntent.OrderChange(NodesViewIntent.OrderChange.Order.CAPACITY))
         viewModel.viewState.test {
             val sortedNodes = nodes.sortedBy { it.capacity.toBigDecimalOrNull() }
-            assertEquals(initialState.success(sortedNodes), awaitItem())
+            assertEquals(initialState.copy(order = NodesViewIntent.OrderChange.Order.CAPACITY).success(sortedNodes), awaitItem())
         }
     }
 
