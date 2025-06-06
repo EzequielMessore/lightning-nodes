@@ -3,8 +3,8 @@ package br.com.messore.tech.lightning.nodes.presentation.feature.nodes
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.screen.ErrorScreen
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.screen.LoadingScreen
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.screen.NodesScreen
