@@ -54,6 +54,15 @@ jobs:
           detekt_all_rules: false
           detekt_build_upon_default_config: false
 
+      - name: Check for Kotlin files
+        id: check_files
+        run: |
+          if [[ $(echo "${{ github.event.pull_request.files }}" | jq -r '.[].filename' | grep -c '\.kt$') -gt 0 ]]; then
+            echo "::set-output name=has_kotlin::true"
+          else
+            echo "::set-output name=has_kotlin::false"
+          fi
+
       - name: Run Detekt only on changed files
         run: |
           # Garante que o histórico e o branch base estão disponíveis
