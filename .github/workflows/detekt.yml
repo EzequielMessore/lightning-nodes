@@ -54,23 +54,35 @@ jobs:
           detekt_all_rules: false
           detekt_build_upon_default_config: false
 
-      - name: Check for Kotlin files
-        id: check_files
+      - name: Get changed Kotlin files
+        id: changed_kotlin
         run: |
-          echo "${{ github.event.pull_request.files }}"
-
-      - name: Run Detekt only on changed files
-        run: |
-          # Garante que o histórico e o branch base estão disponíveis
-          git fetch origin ${{ github.base_ref }} --depth=1
-
-          # Obtém os arquivos Kotlin modificados no PR
           FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.kts\?$' || true)
-
           if [ -n "$FILES" ]; then
-            PARAM="-Psource=$(echo "$FILES" | paste -sd , -)"
-            echo "Running Detekt with: $PARAM"
-            ./gradlew detekt $PARAM
+            FORMATTED=$(echo "$FILES" | paste -sd, -)
+            echo "Changed Kotlin files: $FORMATTED"
+            echo "source_param=-Psource=$FORMATTED" >> $GITHUB_OUTPUT
           else
-            echo "No Kotlin files changed."
+            echo "No Kotlin files changed"
+            echo "source_param=" >> $GITHUB_OUTPUT
           fi
+
+      - name: Get changed Kotlin files via API
+        id: changed_kotlin_api
+        run: |
+          FILES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" \
+            | jq -r '.[] | select(.filename | test("\\.kts?$")) | .filename' | paste -sd, -)
+      
+          if [ -n "$FILES" ]; then
+            echo "source_param=-Psource=$FILES" >> $GITHUB_OUTPUT
+          else
+            echo "source_param=" >> $GITHUB_OUTPUT
+          fi
+
+
+      - name: Run Detekt on changed files
+        if: steps.changed_kotlin.outputs.source_param != ''
+        run: |
+          echo "Running detekt with: ${{ steps.changed_kotlin.outputs.source_param }}"
+          ./gradlew detekt ${{ steps.changed_kotlin.outputs.source_param }}
