@@ -46,6 +46,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
+          reviewdog_level: error
           detekt_all_rules: false
           detekt_config: detekt/detekt.yml
           reviewdog_reporter: github-pr-check
