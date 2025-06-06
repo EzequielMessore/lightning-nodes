@@ -49,4 +49,5 @@ jobs:
           detekt_all_rules: false
           detekt_config: detekt/detekt.yml
           reviewdog_reporter: github-pr-check
+          reviewdog_filter: diff_context
           detekt_build_upon_default_config: false
