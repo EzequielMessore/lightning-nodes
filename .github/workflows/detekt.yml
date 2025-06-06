@@ -65,4 +65,4 @@ jobs:
 
       - name: Run Detekt only on changed files
         if: steps.changed_files.outputs.files != ''
-        run: ./gradlew detekt -PSource"${{ steps.changed_files.outputs.files }}"
+        run: ./gradlew detekt -PSource="${{ steps.changed_files.outputs.files }}"
