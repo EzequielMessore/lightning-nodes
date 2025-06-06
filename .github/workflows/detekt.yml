@@ -56,14 +56,14 @@ jobs:
 
       - name: Run Detekt only on changed files
         run: |
+          # Garante que o histórico e o branch base estão disponíveis
           git fetch origin ${{ github.base_ref }} --depth=1
 
-          PARAM=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '\.kts\?$' \
-            | paste -sd , - \
-            | sed -E 's/^(.+)$/-Psource=\1/')
+          # Obtém os arquivos Kotlin modificados no PR
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.kts\?$' || true)
 
-          if [ -n "$PARAM" ]; then
+          if [ -n "$FILES" ]; then
+            PARAM="-Psource=$(echo "$FILES" | paste -sd , -)"
             echo "Running Detekt with: $PARAM"
             ./gradlew detekt $PARAM
           else
