@@ -42,15 +42,6 @@ jobs:
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Get changed Kotlin files
-        id: changed_files
-        run: |
-          FILES=$(git diff --name-only --staged | grep "\.kts\?$" | paste -sd, -)
-          echo "Changed files: $FILES"
-          echo "files=$FILES" >> $GITHUB_OUTPUT
-        env:
-          GITHUB_OUTPUT: ${{ github.workspace }}/changed_files.txt
-
       - name: Annotate PR with Detekt results
         uses: alaegin/Detekt-Action@v1.23.7
         with:
@@ -64,12 +55,17 @@ jobs:
           detekt_build_upon_default_config: false
 
       - name: Run Detekt only on changed files
-        if: steps.changed_files.outputs.files != ''
         run: |
-          FILES=$(git diff --name-only --staged | grep "\.kts\?$" | paste -sd , -)
-          if [ -n "$FILES" ]; then
-            ./gradlew detekt -Psource="$FILES"
+          git fetch origin ${{ github.base_ref }} --depth=1
+
+          PARAM=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '\.kts\?$' \
+            | paste -sd , - \
+            | sed -E 's/^(.+)$/-Psource=\1/')
+
+          if [ -n "$PARAM" ]; then
+            echo "Running Detekt with: $PARAM"
+            ./gradlew detekt $PARAM
           else
             echo "No Kotlin files changed."
           fi
-
