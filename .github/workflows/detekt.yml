@@ -52,3 +52,6 @@ jobs:
           detekt_config: detekt/detekt.yml
           detekt_all_rules: false
           detekt_build_upon_default_config: false
+
+      - name: Run Detekt
+        run: ./gradlew detekt
