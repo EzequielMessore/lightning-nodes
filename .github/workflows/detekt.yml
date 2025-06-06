@@ -45,9 +45,9 @@ jobs:
       - name: Get changed Kotlin files
         id: changed_files
         run: |
-          FILES=$(git diff --name-only --staged | grep "\.kts\?$" | paste -sd , -)
+          FILES=$(git diff --name-only --staged | grep "\.kts\?$" | paste -sd, -)
+          echo "Changed files: $FILES"
           echo "files=$FILES" >> $GITHUB_OUTPUT
-          echo $FILES
         env:
           GITHUB_OUTPUT: ${{ github.workspace }}/changed_files.txt
 
@@ -63,9 +63,13 @@ jobs:
           detekt_all_rules: false
           detekt_build_upon_default_config: false
 
-
-      - name: Run Detekt
-        run: ./gradlew detekt
-        env:
-          DETEKT_INPUT: ${{ steps.changed_files.outputs.files }}
+      - name: Run Detekt only on changed files
+        if: steps.changed_files.outputs.files != ''
+        run: |
+          FILES=$(git diff --name-only --staged | grep "\.kts\?$" | paste -sd , -)
+          if [ -n "$FILES" ]; then
+            ./gradlew detekt -Psource="$FILES"
+          else
+            echo "No Kotlin files changed."
+          fi
 
