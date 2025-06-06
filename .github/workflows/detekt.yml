@@ -21,8 +21,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -44,13 +42,6 @@ jobs:
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Get changed Kotlin files
-        id: changed_files
-        run: |
-          FILES=$(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }} | grep '\.kts\?$' | paste -sd, -)
-          echo "files=$FILES" >> $GITHUB_OUTPUT
-          echo "Changed files: $FILES"
-
       - name: Annotate PR with Detekt results
         uses: alaegin/Detekt-Action@v1.23.7
         with:
@@ -62,7 +53,13 @@ jobs:
           detekt_config: detekt/detekt.yml
           detekt_all_rules: false
           detekt_build_upon_default_config: false
-          detekt_input: ${{ steps.changed_files.outputs.files }}
+
+      - name: Get changed Kotlin files
+        id: changed_files
+        run: |
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }} | grep '\.kts\?$' | paste -sd, -)
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "Changed files: $FILES"
 
       - name: Run Detekt only on changed files
         if: steps.changed_files.outputs.files != ''
