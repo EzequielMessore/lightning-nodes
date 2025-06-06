@@ -48,7 +48,7 @@ jobs:
           fail_on_error: true
           reviewdog_level: error
           reviewdog_filter: diff_context
-          reviewdog_reporter: github-pr-review  # <- este causa falha no CI!
+          reviewdog_reporter: github-pr-review
           detekt_config: detekt/detekt.yml
           detekt_all_rules: false
           detekt_build_upon_default_config: false
