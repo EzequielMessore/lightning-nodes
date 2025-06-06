@@ -2,6 +2,7 @@ package br.com.messore.tech.lightning.nodes.presentation.feature.nodes.state
 
 import br.com.messore.tech.lightning.nodes.domain.model.Node
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.state.NodesViewIntent.OrderChange.Order
+import java.time.LocalDateTime
 
 data class NodesViewState(
     val order: Order = Order.ALIAS,

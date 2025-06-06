@@ -13,6 +13,7 @@ import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.state.Node
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.state.ScreenType
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.view.model.NodesViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.component.KoinComponent
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
