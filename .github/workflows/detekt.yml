@@ -57,11 +57,7 @@ jobs:
       - name: Check for Kotlin files
         id: check_files
         run: |
-          if [[ $(echo "${{ github.event.pull_request.files }}" | jq -r '.[].filename' | grep -c '\.kt$') -gt 0 ]]; then
-            echo "::set-output name=has_kotlin::true"
-          else
-            echo "::set-output name=has_kotlin::false"
-          fi
+          echo "${{ github.event.pull_request.files }}"
 
       - name: Run Detekt only on changed files
         run: |
