@@ -48,5 +48,5 @@ jobs:
           fail_on_error: true
           detekt_all_rules: false
           detekt_config: detekt/detekt.yml
-          reviewdog_reporter: github-pr-review
+          reviewdog_reporter: github-pr-check
           detekt_build_upon_default_config: false
