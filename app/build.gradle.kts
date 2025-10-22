@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.konan.properties.loadProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -21,6 +24,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        val properties = loadProperties("local.properties")
+        create("release") {
+            storeFile = file(properties.prop("KEYSTORE"))
+            storePassword = properties.prop("KEYSTORE_PASSWORD")
+            keyAlias = properties.prop("KEY_ALIAS")
+            keyPassword = properties.prop("KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -28,6 +41,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -62,4 +76,8 @@ dependencies {
     testImplementation(libs.bundles.testing)
 
     debugImplementation(libs.bundles.compose.debug)
+}
+
+fun Properties.prop(name: String): String {
+    return System.getenv(name) ?: getProperty(name, "\"\"")
 }
