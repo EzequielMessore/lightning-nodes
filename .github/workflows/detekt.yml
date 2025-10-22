@@ -30,6 +30,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Restore local.properties
+        env:
+          LOCAL_PROPERTIES_BASE64: ${{ secrets.LOCAL_PROPERTIES_BASE64 }}
+        run: echo "$LOCAL_PROPERTIES_BASE64" | base64 --decode > local.properties
+
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
