@@ -3,8 +3,8 @@ package br.com.messore.tech.lightning.nodes.presentation.feature.nodes
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.screen.ErrorScreen
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.screen.LoadingScreen
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.screen.NodesScreen
@@ -13,7 +13,6 @@ import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.state.Node
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.state.ScreenType
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.view.model.NodesViewModel
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.component.KoinComponent
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
