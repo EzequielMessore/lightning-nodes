@@ -28,6 +28,7 @@ class NodesViewModel(
             is NodesViewIntent.OrderChange -> orderNodes(intent.order)
             is NodesViewIntent.ShowBottomSheet -> updateBottomSheet(true)
             is NodesViewIntent.HideBottomSheet -> updateBottomSheet(false)
+            is NodesViewIntent.InputSearch -> filterNodesByAlias(intent.search)
         }
     }
 
@@ -58,5 +59,14 @@ class NodesViewModel(
 
     private fun updateBottomSheet(isShowing: Boolean) {
         _viewState.update { it.copy(bottomSheet = BottomSheet(isShowing)) }
+    }
+
+    private fun filterNodesByAlias(alias: String) {
+        val filteredNodes = _viewState.value.nodes.filter { node ->
+            node.alias.contains(other = alias, ignoreCase = true)
+        }
+        _viewState.update {
+            it.copy(search = alias, searchedList = filteredNodes)
+        }
     }
 }

@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -32,12 +35,24 @@ fun NodesScreen(
     ) {
         OrderNode(onIntent, state)
 
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AppTheme.spacing.small),
+            value = state.search,
+            onValueChange = { newValue ->
+                onIntent(NodesViewIntent.InputSearch(newValue))
+            },
+        )
+
+        val nodes = state.searchedList.ifEmpty { state.nodes }
+
         LazyColumn(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.small),
             contentPadding = PaddingValues(AppTheme.spacing.medium),
         ) {
-            items(state.nodes) { node ->
+            items(nodes) { node ->
                 NodeItem(node)
             }
         }

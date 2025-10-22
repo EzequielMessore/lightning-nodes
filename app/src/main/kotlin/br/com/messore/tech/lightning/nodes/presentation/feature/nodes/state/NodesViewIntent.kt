@@ -1,6 +1,6 @@
 package br.com.messore.tech.lightning.nodes.presentation.feature.nodes.state
 
-interface NodesViewIntent {
+sealed interface NodesViewIntent {
     data object GetNodes : NodesViewIntent
     data object Retry : NodesViewIntent
 
@@ -9,6 +9,10 @@ interface NodesViewIntent {
             ALIAS, CHANNELS, CAPACITY,
         }
     }
+
+    data class InputSearch(
+        val search: String,
+    ) : NodesViewIntent
 
     data object ShowBottomSheet : NodesViewIntent
     data object HideBottomSheet : NodesViewIntent

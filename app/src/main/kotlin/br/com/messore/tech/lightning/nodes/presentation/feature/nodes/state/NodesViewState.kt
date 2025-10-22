@@ -5,8 +5,10 @@ import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.state.Node
 import java.time.LocalDateTime
 
 data class NodesViewState(
+    val search: String = "",
     val order: Order = Order.ALIAS,
     val nodes: List<Node> = emptyList(),
+    val searchedList: List<Node> = emptyList(),
     val screenType: ScreenType = ScreenType.LOADING,
     val bottomSheet: BottomSheet = BottomSheet(false),
 ) {
