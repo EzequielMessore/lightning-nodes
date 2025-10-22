@@ -21,12 +21,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Restore local.properties
+        env:
+          LOCAL_PROPERTIES_BASE64: ${{ secrets.LOCAL_PROPERTIES_BASE64 }}
+        run: echo "$LOCAL_PROPERTIES_BASE64" | base64 --decode > local.properties
 
       - name: Cache Gradle packages
         uses: actions/cache@v4
@@ -38,6 +45,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x ./gradlew
 
@@ -47,8 +55,19 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
           reviewdog_level: error
-          reviewdog_filter: diff_context
-          reviewdog_reporter: github-pr-review  # <- este causa falha no CI!
+          reviewdog_filter: file
+          reviewdog_reporter: github-pr-review
           detekt_config: detekt/detekt.yml
           detekt_all_rules: false
           detekt_build_upon_default_config: false
+
+      - name: Get changed Kotlin files
+        id: changed_files
+        run: |
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }} | grep '\.kts\?$' | paste -sd, -)
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "Changed files: $FILES"
+
+      - name: Run Detekt only on changed files
+        if: steps.changed_files.outputs.files != ''
+        run: ./gradlew detekt -Psource="${{ steps.changed_files.outputs.files }}"

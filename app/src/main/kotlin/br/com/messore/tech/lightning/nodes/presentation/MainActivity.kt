@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import br.com.messore.tech.lightning.nodes.presentation.feature.nodes.NodesRoute
 import br.com.messore.tech.lightning.nodes.ui.theme.AppTheme
-import br.com.messore.tech.lightning.nodes.ui.theme.LocalColors
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
