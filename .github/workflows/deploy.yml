@@ -1,12 +1,12 @@
 name: Build and Deploy to Play Store
+
 on:
-  workflow_dispatch:
-    inputs:
-      release_tag:
-        description: 'Release tag'
-        required: true
   release:
     types: [ published ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
@@ -22,26 +22,59 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Get tag name
-        run: echo "TAG_NAME=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
-
-      - name: Extract existing version code
-        run: |
-          RELEASE_TAG=${{ env.TAG_NAME }}
-          LAST_VERSION=$(grep "versionCode" gradle/libs.versions.toml | awk -F '"' '{print $2}')
-          NEW_VERSION=$((LAST_VERSION + 1))
-
-          echo "VERSION_NAME=$RELEASE_TAG" >> $GITHUB_ENV
-          echo "VERSION_CODE=$NEW_VERSION" >> $GITHUB_ENV
-          echo $GITHUB_ENV
-
-      - name: Get release notes
-        id: release_notes
+      - name: Restore local.properties
         env:
-          RELEASE_BODY: ${{ github.event.release.body }}
+          LOCAL_PROPERTIES_BASE64: ${{ secrets.LOCAL_PROPERTIES_BASE64 }}
+        run: echo "$LOCAL_PROPERTIES_BASE64" | base64 --decode > local.properties
+
+      - name: Restore keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          # export multiline notes to GITHUB_OUTPUT
-          echo "notes<<EOF" >> "$GITHUB_OUTPUT"
-          printf "%s\n" "$RELEASE_BODY" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-          echo "$GITHUB_OUTPUT"
+          mkdir -p app
+          echo "${KEYSTORE_BASE64}" | base64 --decode > app/keystore.jks
+
+      - name: Build AAB
+        run: ./gradlew :app:bundleRelease
+
+      # 💡 Novo passo: capturar dados da release
+      - name: Get Release Info
+        id: release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const release = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: context.ref.replace('refs/tags/', '')
+            })
+            core.setOutput('tag', release.data.tag_name)
+            core.setOutput('name', release.data.name)
+            core.setOutput('body', release.data.body)
+            console.log("🔖 Tag:", release.data.tag_name)
+            console.log("📄 Release Name:", release.data.name)
+            console.log("📝 Release Notes:\n", release.data.body)
+            
+            // Imprime o objeto completo (como JSON formatado)
+            core.info('📦 Full release object:');
+            core.info(JSON.stringify(release, null, 2));
+
+      # 💡 Para testar, apenas imprime as infos no log
+      - name: Print Release Info
+        run: |
+          echo "TAG: ${{ steps.release.outputs.tag }}"
+          echo "RELEASE NAME: ${{ steps.release.outputs.name }}"
+          echo -e "RELEASE NOTES:\n${{ steps.release.outputs.body }}"
+
+      # ⚙️ Upload desativado (modo de teste)
+      # descomente este bloco quando quiser subir para a loja
+      # - name: Upload to Play Store
+      #   uses: r0adkll/upload-google-play@v1
+      #   with:
+      #     serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+      #     packageName: br.com.messore.tech.lightning.nodes
+      #     releaseFiles: app/build/outputs/bundle/release/app-release.aab
+      #     track: internal
+      #     status: draft
+      #     releaseName: ${{ steps.release.outputs.tag }}
+      #     whatsNewDirectory: release-notes/
