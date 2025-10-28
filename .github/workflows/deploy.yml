@@ -34,8 +34,8 @@ jobs:
           mkdir -p app
           echo "${KEYSTORE_BASE64}" | base64 --decode > app/keystore.jks
 
-      - name: Build AAB
-        run: ./gradlew :app:bundleRelease
+#      - name: Build AAB
+#        run: ./gradlew :app:bundleRelease
 
       # 💡 Novo passo: capturar dados da release
       - name: Get Release Info
