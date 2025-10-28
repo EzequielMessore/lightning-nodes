@@ -19,8 +19,8 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          fetch-depth: 0
-          fetch-tags: true
+          distribution: temurin
+          java-version: '17'
 
       - name: Get tag name
         run: echo "TAG_NAME=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
