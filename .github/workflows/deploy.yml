@@ -1,5 +1,10 @@
 name: Build and Deploy to Play Store
 on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag'
+        required: true
   release:
     types: [ published ]
 
